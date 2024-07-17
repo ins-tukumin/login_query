@@ -16,34 +16,37 @@ def clear_database():
     c.execute('DELETE FROM visits')
     conn.commit()
 
-# ユーザーIDが提供されていない場合のエラーメッセージ
 if user_id is None:
     st.write("ユーザーIDが提供されていません。URLに ?user_id=example_user を追加してください。")
 else:
-    # カウンターを読み込むまたは初期化
-    c.execute('SELECT count FROM visits WHERE user_id = ?', (user_id,))
-    row = c.fetchone()
-    if row is None:
-        count = 1
-        c.execute('INSERT INTO visits (user_id, count) VALUES (?, ?)', (user_id, count))
-    else:
-        count = row[0] + 1
-        c.execute('UPDATE visits SET count = ? WHERE user_id = ?', (count, user_id))
-    conn.commit()
+    try:
+        c.execute('BEGIN TRANSACTION')
+        
+        c.execute('SELECT count FROM visits WHERE user_id = ?', (user_id,))
+        row = c.fetchone()
+        if row is None:
+            count = 1
+            c.execute('INSERT INTO visits (user_id, count) VALUES (?, ?)', (user_id, count))
+        else:
+            count = row[0] + 1
+            c.execute('UPDATE visits SET count = ? WHERE user_id = ?', (count, user_id))
+        
+        c.execute('COMMIT')
+        
+        if count == 1:
+            st.write(f"ようこそ、ユーザー {user_id} さん。これが初回のアクセスです。")
+        else:
+            st.write(f"お帰りなさい、ユーザー {user_id} さん。これが {count} 回目のアクセスです。")
 
-    # 現在のユーザーの接続回数を表示
-    st.write(f"ユーザー {user_id} の接続回数: {count}")
+        c.execute('SELECT * FROM visits')
+        all_visits = c.fetchall()
+        st.write("全ユーザーの接続回数:")
+        st.write(all_visits)
+    except sqlite3.OperationalError as e:
+        st.write("データベースにアクセスできませんでした。しばらく待ってから再試行してください。")
 
-    # デバッグ用: すべてのユーザーの接続回数を表示
-    c.execute('SELECT * FROM visits')
-    all_visits = c.fetchall()
-    st.write("全ユーザーの接続回数:")
-    st.write(all_visits)
-
-# データベースをクリアするボタン
 if st.button('データベースをクリア'):
     clear_database()
     st.write("データベースをクリアしました。")
 
-# データベース接続を閉じる
 conn.close()
