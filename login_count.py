@@ -11,6 +11,12 @@ conn.commit()
 query_params = st.experimental_get_query_params()
 user_id = query_params.get('user_id', [None])[0]
 
+# データベースのクリア
+def clear_database():
+    c.execute('DELETE FROM visits')
+    conn.commit()
+
+# ユーザーIDが提供されていない場合のエラーメッセージ
 if user_id is None:
     st.write("ユーザーIDが提供されていません。URLに ?user_id=example_user を追加してください。")
 else:
@@ -33,6 +39,11 @@ else:
     all_visits = c.fetchall()
     st.write("全ユーザーの接続回数:")
     st.write(all_visits)
+
+# データベースをクリアするボタン
+if st.button('データベースをクリア'):
+    clear_database()
+    st.write("データベースをクリアしました。")
 
 # データベース接続を閉じる
 conn.close()
