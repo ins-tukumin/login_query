@@ -2,15 +2,19 @@ import streamlit as st
 import sqlite3
 
 # データベース接続の初期化
-conn = sqlite3.connect('visits.db')
-c = conn.cursor()
-c.execute('''CREATE TABLE IF NOT EXISTS visits (user_id TEXT PRIMARY KEY, count INTEGER)''')
-conn.commit()
+def get_db_connection():
+    conn = sqlite3.connect('visits.db', check_same_thread=False)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS visits (user_id TEXT PRIMARY KEY, count INTEGER)''')
+    conn.commit()
+    return conn, c
+
+conn, c = get_db_connection()
 
 # グループごとのURLを定義
 group_urls = {
-    "group1": "hhttps://ragepre.streamlit.app/",
-    "group2": "https://llmrel.streamlit.app/",
+    "group1": "https://www.yahoo.co.jp/",
+    "group2": "https://www.microsoft.com/ja-jp/edge?form=MA13FJ",
     "group3": "https://www.google.com/maps"
 }
 
@@ -28,10 +32,6 @@ def load_participants(file_path):
         st.error("参加者リストファイルが見つかりません。")
     return participants
 
-# クエリパラメータからユーザーIDを取得
-query_params = st.experimental_get_query_params()
-user_id = query_params.get('login_id', [None])[0]
-
 # データベースのクリア
 def clear_database():
     c.execute('DELETE FROM visits')
@@ -40,9 +40,18 @@ def clear_database():
 # 参加者のリストを読み込む
 participants = load_participants('participants2.txt')
 
-if user_id is None:
-    # クエリパラメータがない場合は、ユーザーにIDを入力させる
-    user_id = st.text_input("ユーザーIDを入力してください:")
+# セッション状態を初期化
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.user_id = ""
+    st.session_state.group = ""
+
+# クエリパラメータからユーザーIDを取得
+query_params = st.experimental_get_query_params()
+if not st.session_state.logged_in:
+    user_id = query_params.get('login_id', [None])[0]
+else:
+    user_id = st.session_state.user_id
 
 if user_id:
     try:
@@ -57,7 +66,7 @@ if user_id:
             count = row[0] + 1
             c.execute('UPDATE visits SET count = ? WHERE user_id = ?', (count, user_id))
         
-        c.execute('COMMIT')
+        conn.commit()
         
         if count == 1:
             st.write(f"ようこそ、ユーザー {user_id} さん。これが初回のアクセスです。")
@@ -67,6 +76,10 @@ if user_id:
                 group_url = group_urls.get(group)
                 if group_url:
                     group_url_with_id = f"{group_url}?user_id={user_id}"
+                    # セッション状態を更新
+                    st.session_state.logged_in = True
+                    st.session_state.user_id = user_id
+                    st.session_state.group = group
                     # Metaタグを使ってリダイレクト
                     st.markdown(f'''
                         <meta http-equiv="refresh" content="0; url={group_url_with_id}">
