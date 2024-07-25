@@ -79,7 +79,7 @@ if user_id:
             if group:
                 group_url = group_urls.get(group)
                 if group_url:
-                    group_url_with_id = f"{group_url}?user_id={user_id}"
+                    group_url_with_id = f"{group_url}?user_id={user_id}&second=1"
                     # セッション状態を更新
                     st.session_state.logged_in = True
                     st.session_state.user_id = user_id
