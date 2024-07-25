@@ -13,8 +13,8 @@ conn, c = get_db_connection()
 
 # グループごとのURLを定義
 group_urls = {
-    "group1": "https://www.yahoo.co.jp/",
-    "group2": "https://www.microsoft.com/ja-jp/edge?form=MA13FJ",
+    "group1": "https://ragepre.streamlit.app/",
+    "group2": "https://llmrel.streamlit.app/",
     "group3": "https://www.google.com/maps"
 }
 
