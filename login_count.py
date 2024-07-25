@@ -13,8 +13,8 @@ conn, c = get_db_connection()
 
 # グループごとのURLを定義
 group_urls = {
-    "group1": "https://ragepre.streamlit.app/",
-    "group2": "https://llmrel.streamlit.app/",
+    "group1": "https://llmrel.streamlit.app/",
+    "group2": "https://ragepre.streamlit.app/",
     "group3": "https://www.google.com/maps"
 }
 
@@ -49,9 +49,13 @@ if 'logged_in' not in st.session_state:
 # クエリパラメータからユーザーIDを取得
 query_params = st.experimental_get_query_params()
 if not st.session_state.logged_in:
-    user_id = query_params.get('login_id', [None])[0]
+    user_id = query_params.get('user_id', [None])[0]
 else:
     user_id = st.session_state.user_id
+
+if user_id is None:
+    # クエリパラメータがない場合は、ユーザーにIDを入力させる
+    user_id = st.text_input("ユーザーIDを入力してください:")
 
 if user_id:
     try:
@@ -80,10 +84,8 @@ if user_id:
                     st.session_state.logged_in = True
                     st.session_state.user_id = user_id
                     st.session_state.group = group
-                    # Metaタグを使ってリダイレクト
-                    st.markdown(f'''
-                        <meta http-equiv="refresh" content="0; url={group_url_with_id}">
-                    ''', unsafe_allow_html=True)
+                    # リンクを表示
+                    st.markdown(f'こちらのURLをクリックしてください: <a href="{group_url_with_id}" target="_blank">リンク</a>', unsafe_allow_html=True)
                 else:
                     st.write("対応するグループURLが見つかりません。")
             else:
