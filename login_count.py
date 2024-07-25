@@ -38,7 +38,7 @@ def clear_database():
     conn.commit()
 
 # 参加者のリストを読み込む
-participants = load_participants('participants.txt')
+participants = load_participants('participants2.txt')
 
 if user_id is None:
     # クエリパラメータがない場合は、ユーザーにIDを入力させる
