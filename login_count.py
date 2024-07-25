@@ -85,7 +85,7 @@ if user_id:
                     st.session_state.user_id = user_id
                     st.session_state.group = group
                     # リンクを表示
-                    st.markdown(f'こちらのURLをクリックしてください: <a href="{group_url_with_id}" target="_blank">リンク</a>', unsafe_allow_html=True)
+                    st.markdown(f'続いて、こちらのURLをクリックしてください: <a href="{group_url_with_id}" target="_blank">リンク</a>', unsafe_allow_html=True)
                 else:
                     st.write("対応するグループURLが見つかりません。")
             else:
