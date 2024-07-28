@@ -13,24 +13,30 @@ conn, c = get_db_connection()
 
 # グループごとのURLを定義
 group_urls = {
-    "group1": "https://llmrel.streamlit.app/",
-    "group2": "https://ragepre.streamlit.app/",
-    "group3": "https://www.google.com/maps"
+    "groupa": "https://ragrel.streamlit.app/",
+    "groupb": "https://ragrel.streamlit.app/",
+    "groupc": "https://llmrel.streamlit.app/",
+    "groupd": "https://llmrel.streamlit.app/",
+    "groupe": "https://rag-repl.streamlit.app/",
+    "groupf": "https://rag-repl.streamlit.app/",
+    "groupg": "https://llmrel.streamlit.app/",
+    "grouph": "https://llmrel.streamlit.app/",
+    "xxxx": "https://llmcou.streamlit.app/"
 }
 
 # participants.txtファイルからIDとグループを読み込む関数
-def load_participants(file_path):
-    participants = {}
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    user_id, group = line.split(',')
-                    participants[user_id] = group
-    except FileNotFoundError:
-        st.error("参加者リストファイルが見つかりません。")
-    return participants
+#def load_participants(file_path):
+#    participants = {}
+#    try:
+#        with open(file_path, 'r') as file:
+#            for line in file:
+#                line = line.strip()
+#               if line and not line.startswith('#'):
+#                    user_id, group = line.split(',')
+#                    participants[user_id] = group
+#    except FileNotFoundError:
+#        st.error("参加者リストファイルが見つかりません。")
+#   return participants
 
 # データベースのクリア
 def clear_database():
@@ -38,7 +44,7 @@ def clear_database():
     conn.commit()
 
 # 参加者のリストを読み込む
-participants = load_participants('participants2.txt')
+#participants = load_participants('participants2.txt')
 
 # セッション状態を初期化
 if 'logged_in' not in st.session_state:
@@ -50,8 +56,10 @@ if 'logged_in' not in st.session_state:
 query_params = st.experimental_get_query_params()
 if not st.session_state.logged_in:
     user_id = query_params.get('user_id', [None])[0]
+    group = query_params.get('group', [None])[0]
 else:
     user_id = st.session_state.user_id
+    
 
 if user_id is None:
     # クエリパラメータがない場合は、ユーザーにIDを入力させる
@@ -73,13 +81,13 @@ if user_id:
         conn.commit()
         
         if count == 1:
-            st.write(f"ようこそ、ユーザー {user_id} さん。これが初回のアクセスです。")
+            #st.write(f"ようこそ、ユーザー {user_id} さん。これが初回のアクセスです。")
             # ユーザーIDからグループを決定
-            group = participants.get(user_id)
+            #group = participants.get(user_id)
             if group:
                 group_url = group_urls.get(group)
                 if group_url:
-                    group_url_with_id = f"{group_url}?user_id={user_id}&second=1"
+                    group_url_with_id = f"{group_url}?user_id={user_id}&group={group}&second=1"
                     # セッション状態を更新
                     st.session_state.logged_in = True
                     st.session_state.user_id = user_id
