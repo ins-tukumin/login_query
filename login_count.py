@@ -113,10 +113,10 @@ if user_id:
 else:
     st.write("ユーザーIDが提供されていません。URLに ?user_id=example_user を追加するか、上記のテキストボックスに入力してください。")
 
-if st.button('データベースをクリア'):
-    clear_database()
-    st.write("データベースをクリアしました。")
-    st.experimental_rerun()
+#if st.button('データベースをクリア'):
+#    clear_database()
+#    st.write("データベースをクリアしました。")
+#    st.experimental_rerun()
 
 conn.close()
 
