@@ -85,6 +85,7 @@ if user_id:
             # ユーザーIDからグループを決定
             #group = participants.get(user_id)
             if group:
+                group = query_params.get('group', [None])[0]
                 group_url = group_urls.get(group)
                 if group_url:
                     group_url_with_id = f"{group_url}?user_id={user_id}&group={group}&second=1"
