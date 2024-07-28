@@ -21,7 +21,7 @@ group_urls = {
     "groupf": "https://rag-repl.streamlit.app/",
     "groupg": "https://llmrel.streamlit.app/",
     "grouph": "https://llmrel.streamlit.app/",
-    "xxxx": "https://llmcou.streamlit.app/"
+    "groupx": "https://llmcou.streamlit.app/"
 }
 
 # participants.txtファイルからIDとグループを読み込む関数
