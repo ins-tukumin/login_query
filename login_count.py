@@ -104,8 +104,8 @@ if user_id:
 
         c.execute('SELECT * FROM visits')
         all_visits = c.fetchall()
-        #st.write("全ユーザーの接続回数:")
-        #st.write(all_visits)
+        st.write("全ユーザーの接続回数:")
+        st.write(all_visits)
     except sqlite3.OperationalError as e:
         st.write("データベースにアクセスできませんでした。しばらく待ってから再試行してください。")
     except Exception as e:
